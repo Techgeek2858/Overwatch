@@ -142,3 +142,51 @@ select {
   padding: 2rem 0;
   text-align: center;
 }
+
+
+.hero-card {
+  cursor: pointer;
+  transition: border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hero-card:hover,
+.hero-card:focus-visible {
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(2, 6, 23, 0.45);
+  outline: none;
+}
+
+.hero-card.is-selected {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+
+.hero-hint {
+  margin: 0.65rem 0 0;
+  color: var(--accent);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.lore-panel {
+  margin-top: 1.8rem;
+}
+
+.lore-card {
+  background: #020617;
+  border: 1px solid var(--card-border);
+  border-radius: 0.75rem;
+  padding: 1rem;
+}
+
+.lore-card h3 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.lore-card p {
+  margin: 0.75rem 0 0;
+  color: var(--muted);
+  line-height: 1.5;
+}
