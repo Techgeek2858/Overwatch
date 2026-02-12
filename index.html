@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Overwatch Hero Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="hero-header">
+      <h1>Overwatch Hero Dashboard</h1>
+      <p>Browse and filter the complete hero roster.</p>
+    </header>
+
+    <main class="container">
+      <section class="controls" aria-label="Dashboard controls">
+        <div class="control-group">
+          <label for="searchInput">Search heroes</label>
+          <input id="searchInput" type="search" placeholder="Try Tracer, Tank, Support..." />
+        </div>
+
+        <div class="control-group">
+          <label for="roleFilter">Filter by role</label>
+          <select id="roleFilter">
+            <option value="all">All Roles</option>
+            <option value="Tank">Tank</option>
+            <option value="Damage">Damage</option>
+            <option value="Support">Support</option>
+          </select>
+        </div>
+      </section>
+
+      <section class="stats" aria-live="polite">
+        <article class="stat-card">
+          <h2>Total Heroes</h2>
+          <p id="totalHeroes">0</p>
+        </article>
+        <article class="stat-card">
+          <h2>Showing</h2>
+          <p id="shownHeroes">0</p>
+        </article>
+      </section>
+
+      <section>
+        <h2 class="section-title">Roster</h2>
+        <div id="heroGrid" class="hero-grid"></div>
+      </section>
+    </main>
+
+    <template id="heroCardTemplate">
+      <article class="hero-card">
+        <header>
+          <h3 class="hero-name"></h3>
+          <span class="badge hero-role"></span>
+        </header>
+        <p class="hero-origin"></p>
+      </article>
+    </template>
+
+    <script src="app.js"></script>
+  </body>
+</html>
