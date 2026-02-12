@@ -45,15 +45,24 @@
         <h2 class="section-title">Roster</h2>
         <div id="heroGrid" class="hero-grid"></div>
       </section>
+
+      <section class="lore-panel" aria-live="polite" aria-atomic="true">
+        <h2 class="section-title">Hero Lore</h2>
+        <article id="loreCard" class="lore-card">
+          <h3 id="loreName">Select a hero</h3>
+          <p id="loreText">Click any hero card to view their lore.</p>
+        </article>
+      </section>
     </main>
 
     <template id="heroCardTemplate">
-      <article class="hero-card">
+      <article class="hero-card" tabindex="0" role="button" aria-label="View hero lore">
         <header>
           <h3 class="hero-name"></h3>
           <span class="badge hero-role"></span>
         </header>
         <p class="hero-origin"></p>
+        <p class="hero-hint">Click to read lore</p>
       </article>
     </template>
 

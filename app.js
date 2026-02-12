@@ -42,12 +42,60 @@ const heroes = [
   { name: 'Zenyatta', role: 'Support', origin: 'Nepal' }
 ];
 
+const heroLore = {
+  'D.Va': 'Hana Song is a former pro gamer who now pilots a state-of-the-art mech to defend South Korea from omnic threats emerging from the sea.',
+  Doomfist: 'Akande Ogundimu believes conflict is the catalyst for human evolution, and he seeks to forge a stronger future through force as a Talon leader.',
+  'Junker Queen': 'Odessa Stone seized control of Junkertown through brutal arena combat and now rules the irradiated outback with charisma and steel.',
+  Mauga: 'A heavy assault specialist from Samoa, Mauga thrives on chaos and destruction while carrying out Talon operations with an intimidating grin.',
+  Orisa: 'Built by Efi Oladele from the remains of OR15 defense bots, Orisa protects Numbani with adaptive intelligence and a steadfast sense of duty.',
+  Ramattra: 'Once a monk advocating peace, Ramattra embraced revolution and formed Null Sector after seeing omnics denied justice and equal rights.',
+  Reinhardt: 'A crusader of honor from Germany, Reinhardt Wilhelm fights with a rocket hammer and unbreakable spirit to protect those who cannot protect themselves.',
+  Roadhog: 'Mako Rutledge became the ruthless enforcer Roadhog after Australia\'s omnium catastrophe, roaming as a masked outlaw from Junkertown.',
+  Sigma: 'Brilliant astrophysicist Siebren de Kuiper was transformed by a gravity experiment gone wrong, leaving Talon to weaponize his fractured genius.',
+  Winston: 'A super-intelligent gorilla from Horizon Lunar Colony, Winston became a scientist and hero inspired by Overwatch\'s ideals of hope.',
+  'Wrecking Ball': 'Hammond, a genetically engineered hamster from the lunar colony, built a mechanized ball and fought his way to freedom in Junkertown.',
+  Zarya: 'Aleksandra Zaryanova is a celebrated Russian soldier who turned her strength toward defending her homeland from omnic invasion.',
+  Ashe: 'Elizabeth Caledonia Ashe leads the Deadlock Gang with sharp aim and sharper ambition, enforcing her own outlaw code in the American Southwest.',
+  Bastion: 'An E54 Bastion unit once built for war, this curious omnic now wanders nature with its bird companion Ganymede, searching for purpose.',
+  Cassidy: 'Cole Cassidy, a former Deadlock gunslinger, now travels the world trying to right wrongs with a revolver and hard-earned resolve.',
+  Echo: 'Created by Dr. Mina Liao, Echo is an advanced adaptive robot designed to learn and evolve while carrying forward Overwatch\'s hopeful mission.',
+  Genji: 'After near-fatal betrayal, Genji Shimada was rebuilt with cybernetics and later found peace through Zenyatta\'s teachings.',
+  Hanzo: 'Heir to the Shimada empire, Hanzo abandoned his clan after a tragic duel and now seeks redemption for his past.',
+  Junkrat: 'Jamison Fawkes is an explosives-obsessed anarchist from the Australian outback who turned accidental treasure into global chaos.',
+  Mei: 'Dr. Mei-Ling Zhou is a climatologist who survived cryostasis in Antarctica and now fights to protect the world\'s future.',
+  Pharah: 'Fareeha Amari serves as a security leader in advanced Raptora armor, striving to honor both her duty and her family legacy.',
+  Reaper: 'Gabriel Reyes, once Overwatch\'s strike commander, became the shadowy mercenary Reaper after being twisted by deathly experiments.',
+  Sojourn: 'Vivian Chase, known as Sojourn, is a disciplined former Overwatch captain whose cybernetic enhancements support precise tactical leadership.',
+  'Soldier: 76': 'The vigilante Soldier: 76 is Jack Morrison, former Overwatch commander, uncovering conspiracies while dispensing justice on his own terms.',
+  Sombra: 'A master hacker from Mexico, Sombra manipulates global powers from the shadows in pursuit of secrets and control.',
+  Symmetra: 'Satya Vaswani, an architect of hard-light technology, seeks to bring order to chaos while questioning the world she helps shape.',
+  Torbjörn: 'Master engineer Torbjörn Lindholm designs powerful weapons systems and fights to ensure technology serves humanity responsibly.',
+  Tracer: 'Lena Oxton, the chronal-jumping Tracer, is an upbeat adventurer who became one of Overwatch\'s most recognizable heroes.',
+  Venture: 'Venture is a daring archeologist and explorer who combines cutting-edge drilling tech with a passion for unearthing hidden history.',
+  Widowmaker: 'Amélie Lacroix was transformed by Talon into the emotionless assassin Widowmaker, using lethal precision from afar.',
+  Ana: 'Ana Amari, one of Overwatch\'s founding members, returned from hiding as a sniper and strategist to protect a new generation.',
+  Baptiste: 'Jean-Baptiste Augustin escaped Talon and now uses his combat medic training to save lives where the world has turned its back.',
+  Brigitte: 'Brigitte Lindholm, a gifted engineer and shield bearer, continues Reinhardt\'s mission of protecting the innocent.',
+  Illari: 'Illari is the last of the Inti Warriors after a solar ritual tragedy, wielding sun-forged power while carrying immense guilt.',
+  Juno: 'Raised in a Mars colony, Juno journeys to Earth as a brilliant young scientist determined to reconnect isolated communities.',
+  Kiriko: 'Kiriko Kamori balances shrine traditions with modern heroism, defending Kanezaka with swift movement and healing ofuda.',
+  Lifeweaver: 'Niran Pruksamanee developed biolight technology to heal and create, using his inventions to protect life in all forms.',
+  'Lúcio': 'Lúcio Correia dos Santos is a musician-activist who amplifies hope and resistance through sound in the streets of Rio.',
+  Mercy: 'Dr. Angela Ziegler, known as Mercy, is a brilliant healer whose medical breakthroughs and compassion save countless lives.',
+  Moira: 'Moira O\'Deorain is a controversial geneticist pursuing scientific advancement without ethical limits under Talon\'s patronage.',
+  Zenyatta: 'Zenyatta is an omnic monk who travels the world to teach harmony between humans and omnics through empathy and mindfulness.'
+};
+
 const heroGrid = document.getElementById('heroGrid');
 const totalHeroes = document.getElementById('totalHeroes');
 const shownHeroes = document.getElementById('shownHeroes');
 const searchInput = document.getElementById('searchInput');
 const roleFilter = document.getElementById('roleFilter');
 const cardTemplate = document.getElementById('heroCardTemplate');
+const loreName = document.getElementById('loreName');
+const loreText = document.getElementById('loreText');
+
+let selectedHeroName = null;
 
 totalHeroes.textContent = heroes.length;
 
@@ -77,13 +125,37 @@ function renderHeroes() {
 
   filtered.forEach((hero) => {
     const card = cardTemplate.content.cloneNode(true);
-    card.querySelector('.hero-name').textContent = hero.name;
-    card.querySelector('.hero-role').textContent = hero.role;
-    card.querySelector('.hero-origin').textContent = `Origin: ${hero.origin}`;
+    const heroCard = card.querySelector('.hero-card');
+    heroCard.querySelector('.hero-name').textContent = hero.name;
+    heroCard.querySelector('.hero-role').textContent = hero.role;
+    heroCard.querySelector('.hero-origin').textContent = `Origin: ${hero.origin}`;
+    heroCard.setAttribute('aria-label', `View lore for ${hero.name}`);
+
+    if (hero.name === selectedHeroName) {
+      heroCard.classList.add('is-selected');
+    }
+
+    const showLore = () => updateLorePanel(hero.name);
+
+    heroCard.addEventListener('click', showLore);
+    heroCard.addEventListener('keydown', (event) => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        showLore();
+      }
+    });
+
     fragment.append(card);
   });
 
   heroGrid.append(fragment);
+}
+
+function updateLorePanel(heroName) {
+  selectedHeroName = heroName;
+  loreName.textContent = heroName;
+  loreText.textContent = heroLore[heroName] || 'Lore coming soon for this hero.';
+  renderHeroes();
 }
 
 searchInput.addEventListener('input', renderHeroes);
