@@ -319,3 +319,38 @@ button:hover {
     padding: 0.85rem;
   }
 }
+
+.hero-card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.hero-page {
+  max-width: 760px;
+  padding-top: 2.5rem;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 1rem;
+  color: #f8fafc;
+  text-decoration: none;
+  border-bottom: 1px solid transparent;
+}
+
+.back-link:hover {
+  border-bottom-color: var(--accent);
+}
+
+.hero-profile {
+  padding: 1.4rem;
+}
+
+.hero-profile h1 {
+  margin: 0.2rem 0 0.8rem;
+}
+
+.hero-profile--missing {
+  border-color: #f87171;
+}

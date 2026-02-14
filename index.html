@@ -13,7 +13,7 @@
     <header class="hero-header">
       <p class="eyebrow">Overwatch Intelligence Hub</p>
       <h1>Hero Dashboard</h1>
-      <p>Browse the full roster, inspect live performance highlights, and drill into hero lore.</p>
+      <p>Browse the full roster and open dedicated pages for each hero.</p>
     </header>
 
     <main class="container">
@@ -68,10 +68,6 @@
           <h2>Rates Imported</h2>
           <p id="heroesWithRates">0</p>
         </article>
-        <article class="stat-card">
-          <h2>Selected Hero</h2>
-          <p id="selectedHero" class="stat-card__selected">None</p>
-        </article>
       </section>
 
       <p id="resultsSummary" class="results-summary" aria-live="polite"></p>
@@ -80,28 +76,20 @@
         <h2 class="section-title">Roster</h2>
         <div id="heroGrid" class="hero-grid"></div>
       </section>
-
-      <section class="lore-panel" aria-live="polite" aria-atomic="true">
-        <h2 class="section-title">Hero Intel</h2>
-        <article id="loreCard" class="lore-card">
-          <h3 id="loreName">Select a hero</h3>
-          <p id="loreText">Click any hero card to view their lore.</p>
-          <p id="loreMeta" class="lore-meta">Role and performance stats will appear here.</p>
-        </article>
-      </section>
     </main>
 
     <template id="heroCardTemplate">
-      <article class="hero-card" tabindex="0" role="button" aria-label="View hero lore">
+      <a class="hero-card hero-card-link" href="#" aria-label="Open hero details page">
         <header>
           <h3 class="hero-name"></h3>
           <span class="badge hero-role"></span>
         </header>
         <p class="hero-origin"></p>
-        <p class="hero-hint">Click to read lore</p>
-      </article>
+        <p class="hero-hint">Open hero page</p>
+      </a>
     </template>
 
+    <script src="data.js"></script>
     <script src="app.js"></script>
   </body>
 </html>
