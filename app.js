@@ -101,6 +101,7 @@ const heroGrid = document.getElementById('heroGrid');
 const totalHeroes = document.getElementById('totalHeroes');
 const shownHeroes = document.getElementById('shownHeroes');
 const heroesWithRates = document.getElementById('heroesWithRates');
+const selectedHero = document.getElementById('selectedHero');
 const searchInput = document.getElementById('searchInput');
 const roleFilter = document.getElementById('roleFilter');
 const sortOrder = document.getElementById('sortOrder');
@@ -109,6 +110,8 @@ const resultsSummary = document.getElementById('resultsSummary');
 const cardTemplate = document.getElementById('heroCardTemplate');
 const loreName = document.getElementById('loreName');
 const loreText = document.getElementById('loreText');
+const loreMeta = document.getElementById('loreMeta');
+const roleChips = [...document.querySelectorAll('.chip')];
 
 let selectedHeroName = null;
 
@@ -129,6 +132,27 @@ function sortHeroes(heroList, selectedSort) {
   return sorted;
 }
 
+function setActiveChip(roleValue) {
+  roleChips.forEach((chip) => {
+    chip.classList.toggle('is-active', chip.dataset.role === roleValue);
+  });
+}
+
+function updateResultsSummary(count, role) {
+  const roleText = role === 'all' ? 'all roles' : `${role} heroes`;
+  const filterState = searchInput.value.trim() ? ` matching “${searchInput.value.trim()}”` : '';
+  resultsSummary.textContent = `Showing ${count} of ${heroes.length} heroes across ${roleText}${filterState}.`;
+}
+
+function getLoreMeta(hero) {
+  const rates = heroRates[hero.name];
+  if (!rates) {
+    return `${hero.role} • ${hero.origin} • No tracked rates yet.`;
+  }
+
+  return `${hero.role} • ${hero.origin} • Win ${rates.winRate} • Pick ${rates.pickRate}`;
+}
+
 function renderHeroes() {
   const query = searchInput.value.trim().toLowerCase();
   const role = roleFilter.value;
@@ -147,11 +171,21 @@ function renderHeroes() {
   const sorted = sortHeroes(filtered, selectedSort);
 
   shownHeroes.textContent = sorted.length;
-  resultsSummary.textContent = `Showing ${sorted.length} of ${heroes.length} heroes${role === 'all' ? '' : ` in ${role}`}.`;
+  selectedHero.textContent = selectedHeroName || 'None';
+  updateResultsSummary(sorted.length, role);
+  setActiveChip(role);
   heroGrid.innerHTML = '';
 
+  if (selectedHeroName && !sorted.some((hero) => hero.name === selectedHeroName)) {
+    selectedHeroName = null;
+    selectedHero.textContent = 'None';
+    loreName.textContent = 'Select a hero';
+    loreText.textContent = 'Click any hero card to view their lore.';
+    loreMeta.textContent = 'Role and performance stats will appear here.';
+  }
+
   if (sorted.length === 0) {
-    heroGrid.innerHTML = '<p class="empty-state">No heroes match your current filters.</p>';
+    heroGrid.innerHTML = '<p class="empty-state">No heroes match your current filters. Try resetting or searching by role or region.</p>';
     return;
   }
 
@@ -195,8 +229,13 @@ function renderHeroes() {
 
 function updateLorePanel(heroName) {
   selectedHeroName = heroName;
+  selectedHero.textContent = heroName;
+
+  const hero = heroes.find((item) => item.name === heroName);
   loreName.textContent = heroName;
   loreText.textContent = heroLore[heroName] || 'Lore coming soon for this hero.';
+  loreMeta.textContent = hero ? getLoreMeta(hero) : 'Role and performance stats will appear here.';
+
   renderHeroes();
 }
 
@@ -204,8 +243,20 @@ function resetDashboardFilters() {
   searchInput.value = '';
   roleFilter.value = 'all';
   sortOrder.value = 'name-asc';
+  selectedHeroName = null;
+  selectedHero.textContent = 'None';
+  loreName.textContent = 'Select a hero';
+  loreText.textContent = 'Click any hero card to view their lore.';
+  loreMeta.textContent = 'Role and performance stats will appear here.';
   renderHeroes();
 }
+
+roleChips.forEach((chip) => {
+  chip.addEventListener('click', () => {
+    roleFilter.value = chip.dataset.role;
+    renderHeroes();
+  });
+});
 
 searchInput.addEventListener('input', renderHeroes);
 roleFilter.addEventListener('change', renderHeroes);
