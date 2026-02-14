@@ -1,4 +1,4 @@
-const heroes = [
+const defaultHeroes = [
   { name: 'D.Va', role: 'Tank', origin: 'South Korea' },
   { name: 'Doomfist', role: 'Tank', origin: 'Nigeria' },
   { name: 'Junker Queen', role: 'Tank', origin: 'Australia' },
@@ -97,6 +97,9 @@ const heroRates = {
   Doomfist: { winRate: '50.8%', pickRate: '3.9%' }
 };
 
+const API_ENDPOINT = window.OVERWATCH_HERO_API_URL || '/api/heroes';
+let heroes = [...defaultHeroes];
+
 const heroGrid = document.getElementById('heroGrid');
 const totalHeroes = document.getElementById('totalHeroes');
 const shownHeroes = document.getElementById('shownHeroes');
@@ -143,8 +146,57 @@ function syncHeroToUrl(heroName) {
   window.history.pushState({}, '', url);
 }
 
-totalHeroes.textContent = heroes.length;
-heroesWithRates.textContent = Object.keys(heroRates).length;
+function syncDashboardStats() {
+  totalHeroes.textContent = heroes.length;
+  heroesWithRates.textContent = Object.keys(heroRates).length;
+}
+
+function normalizeHeroRecord(hero) {
+  if (!hero || typeof hero !== 'object') {
+    return null;
+  }
+
+  const name = hero.name || hero.heroName;
+  const role = hero.role?.name || hero.role;
+  const origin = hero.origin || hero.location || hero.nationality || 'Unknown';
+
+  if (!name || !role) {
+    return null;
+  }
+
+  return {
+    name: String(name).trim(),
+    role: String(role).trim(),
+    origin: String(origin).trim()
+  };
+}
+
+async function loadHeroesFromApi() {
+  try {
+    const response = await fetch(API_ENDPOINT, {
+      headers: { Accept: 'application/json' }
+    });
+
+    if (!response.ok) {
+      throw new Error(`Hero API returned ${response.status}`);
+    }
+
+    const payload = await response.json();
+    const list = Array.isArray(payload) ? payload : payload.heroes;
+
+    if (!Array.isArray(list)) {
+      throw new Error('Hero API response was not an array.');
+    }
+
+    const nextHeroes = list.map(normalizeHeroRecord).filter(Boolean);
+
+    if (nextHeroes.length > 0) {
+      heroes = nextHeroes;
+    }
+  } catch (error) {
+    console.warn(`Falling back to bundled hero roster because ${error.message}`);
+  }
+}
 
 function sortHeroes(heroList, selectedSort) {
   const sorted = [...heroList];
@@ -317,9 +369,17 @@ window.addEventListener('popstate', () => {
   renderHeroes();
 });
 
-const heroFromUrl = getHeroFromUrl();
-if (heroFromUrl) {
-  updateLorePanel(heroFromUrl.name);
-} else {
+async function initDashboard() {
+  await loadHeroesFromApi();
+  syncDashboardStats();
+
+  const heroFromUrl = getHeroFromUrl();
+  if (heroFromUrl) {
+    updateLorePanel(heroFromUrl.name);
+    return;
+  }
+
   renderHeroes();
 }
+
+initDashboard();
