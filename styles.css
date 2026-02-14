@@ -224,3 +224,8 @@ button:focus-visible {
   color: var(--muted);
   line-height: 1.5;
 }
+
+
+.hero-hint--rates {
+  color: #93c5fd;
+}

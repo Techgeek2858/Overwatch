@@ -86,9 +86,21 @@ const heroLore = {
   Zenyatta: 'Zenyatta is an omnic monk who travels the world to teach harmony between humans and omnics through empathy and mindfulness.'
 };
 
+const heroRates = {
+  Ana: { winRate: '45.2%', pickRate: '9.2%' },
+  Ashe: { winRate: '51.1%', pickRate: '8.1%' },
+  Baptiste: { winRate: '44.4%', pickRate: '2.7%' },
+  Bastion: { winRate: '50.8%', pickRate: '11%' },
+  Brigitte: { winRate: '52.2%', pickRate: '2.2%' },
+  Cassidy: { winRate: '49.2%', pickRate: '10.7%' },
+  'D.Va': { winRate: '47.9%', pickRate: '7%' },
+  Doomfist: { winRate: '50.8%', pickRate: '3.9%' }
+};
+
 const heroGrid = document.getElementById('heroGrid');
 const totalHeroes = document.getElementById('totalHeroes');
 const shownHeroes = document.getElementById('shownHeroes');
+const heroesWithRates = document.getElementById('heroesWithRates');
 const searchInput = document.getElementById('searchInput');
 const roleFilter = document.getElementById('roleFilter');
 const sortOrder = document.getElementById('sortOrder');
@@ -101,6 +113,7 @@ const loreText = document.getElementById('loreText');
 let selectedHeroName = null;
 
 totalHeroes.textContent = heroes.length;
+heroesWithRates.textContent = Object.keys(heroRates).length;
 
 function sortHeroes(heroList, selectedSort) {
   const sorted = [...heroList];
@@ -150,6 +163,14 @@ function renderHeroes() {
     heroCard.querySelector('.hero-name').textContent = hero.name;
     heroCard.querySelector('.hero-role').textContent = hero.role;
     heroCard.querySelector('.hero-origin').textContent = `Origin: ${hero.origin}`;
+    const rates = heroRates[hero.name];
+    const heroHint = heroCard.querySelector('.hero-hint');
+
+    if (rates) {
+      heroHint.textContent = `Win: ${rates.winRate} • Pick: ${rates.pickRate}`;
+      heroHint.classList.add('hero-hint--rates');
+    }
+
     heroCard.setAttribute('aria-label', `View lore for ${hero.name}`);
 
     if (hero.name === selectedHeroName) {
