@@ -28,6 +28,20 @@
             <option value="Support">Support</option>
           </select>
         </div>
+
+        <div class="control-group">
+          <label for="sortOrder">Sort roster</label>
+          <select id="sortOrder">
+            <option value="name-asc">Name (A → Z)</option>
+            <option value="name-desc">Name (Z → A)</option>
+            <option value="role-name">Role, then name</option>
+          </select>
+        </div>
+
+        <div class="control-group control-group--actions">
+          <label class="visually-hidden" for="resetFilters">Reset filters</label>
+          <button id="resetFilters" type="button">Reset filters</button>
+        </div>
       </section>
 
       <section class="stats" aria-live="polite">
@@ -40,6 +54,8 @@
           <p id="shownHeroes">0</p>
         </article>
       </section>
+
+      <p id="resultsSummary" class="results-summary" aria-live="polite"></p>
 
       <section>
         <h2 class="section-title">Roster</h2>
