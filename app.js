@@ -63,7 +63,7 @@ const heroLore = {
   Hanzo: 'Heir to the Shimada empire, Hanzo abandoned his clan after a tragic duel and now seeks redemption for his past.',
   Junkrat: 'Jamison Fawkes is an explosives-obsessed anarchist from the Australian outback who turned accidental treasure into global chaos.',
   Mei: 'Dr. Mei-Ling Zhou is a climatologist who survived cryostasis in Antarctica and now fights to protect the world\'s future.',
-  Pharah: 'Fareeha Amari serves as a security leader in advanced Raptora armor, striving to honor both her duty and her family legacy.',
+  Pharah: 'Fareeha Amari serves as a decorated security captain in Raptora armor, striving to honor both her duty and her family legacy.',
   Reaper: 'Gabriel Reyes, once Overwatch\'s strike commander, became the shadowy mercenary Reaper after being twisted by deathly experiments.',
   Sojourn: 'Vivian Chase, known as Sojourn, is a disciplined former Overwatch captain whose cybernetic enhancements support precise tactical leadership.',
   'Soldier: 76': 'The vigilante Soldier: 76 is Jack Morrison, former Overwatch commander, uncovering conspiracies while dispensing justice on his own terms.',
@@ -91,6 +91,9 @@ const totalHeroes = document.getElementById('totalHeroes');
 const shownHeroes = document.getElementById('shownHeroes');
 const searchInput = document.getElementById('searchInput');
 const roleFilter = document.getElementById('roleFilter');
+const sortOrder = document.getElementById('sortOrder');
+const resetFilters = document.getElementById('resetFilters');
+const resultsSummary = document.getElementById('resultsSummary');
 const cardTemplate = document.getElementById('heroCardTemplate');
 const loreName = document.getElementById('loreName');
 const loreText = document.getElementById('loreText');
@@ -99,9 +102,24 @@ let selectedHeroName = null;
 
 totalHeroes.textContent = heroes.length;
 
+function sortHeroes(heroList, selectedSort) {
+  const sorted = [...heroList];
+
+  if (selectedSort === 'name-desc') {
+    sorted.sort((a, b) => b.name.localeCompare(a.name));
+  } else if (selectedSort === 'role-name') {
+    sorted.sort((a, b) => a.role.localeCompare(b.role) || a.name.localeCompare(b.name));
+  } else {
+    sorted.sort((a, b) => a.name.localeCompare(b.name));
+  }
+
+  return sorted;
+}
+
 function renderHeroes() {
   const query = searchInput.value.trim().toLowerCase();
   const role = roleFilter.value;
+  const selectedSort = sortOrder.value;
 
   const filtered = heroes.filter((hero) => {
     const matchesRole = role === 'all' || hero.role === role;
@@ -113,17 +131,20 @@ function renderHeroes() {
     return matchesRole && matchesQuery;
   });
 
-  shownHeroes.textContent = filtered.length;
+  const sorted = sortHeroes(filtered, selectedSort);
+
+  shownHeroes.textContent = sorted.length;
+  resultsSummary.textContent = `Showing ${sorted.length} of ${heroes.length} heroes${role === 'all' ? '' : ` in ${role}`}.`;
   heroGrid.innerHTML = '';
 
-  if (filtered.length === 0) {
+  if (sorted.length === 0) {
     heroGrid.innerHTML = '<p class="empty-state">No heroes match your current filters.</p>';
     return;
   }
 
   const fragment = document.createDocumentFragment();
 
-  filtered.forEach((hero) => {
+  sorted.forEach((hero) => {
     const card = cardTemplate.content.cloneNode(true);
     const heroCard = card.querySelector('.hero-card');
     heroCard.querySelector('.hero-name').textContent = hero.name;
@@ -158,7 +179,16 @@ function updateLorePanel(heroName) {
   renderHeroes();
 }
 
+function resetDashboardFilters() {
+  searchInput.value = '';
+  roleFilter.value = 'all';
+  sortOrder.value = 'name-asc';
+  renderHeroes();
+}
+
 searchInput.addEventListener('input', renderHeroes);
 roleFilter.addEventListener('change', renderHeroes);
+sortOrder.addEventListener('change', renderHeroes);
+resetFilters.addEventListener('click', resetDashboardFilters);
 
 renderHeroes();
