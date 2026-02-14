@@ -112,8 +112,36 @@ const loreName = document.getElementById('loreName');
 const loreText = document.getElementById('loreText');
 const loreMeta = document.getElementById('loreMeta');
 const roleChips = [...document.querySelectorAll('.chip')];
+const heroDetails = document.getElementById('heroDetails');
 
 let selectedHeroName = null;
+
+function toHeroSlug(heroName) {
+  return heroName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+}
+
+function findHeroBySlug(slug) {
+  return heroes.find((hero) => toHeroSlug(hero.name) === slug) || null;
+}
+
+function getHeroFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  const heroSlug = params.get('hero');
+
+  return heroSlug ? findHeroBySlug(heroSlug) : null;
+}
+
+function syncHeroToUrl(heroName) {
+  const url = new URL(window.location.href);
+
+  if (!heroName) {
+    url.searchParams.delete('hero');
+  } else {
+    url.searchParams.set('hero', toHeroSlug(heroName));
+  }
+
+  window.history.pushState({}, '', url);
+}
 
 totalHeroes.textContent = heroes.length;
 heroesWithRates.textContent = Object.keys(heroRates).length;
@@ -182,6 +210,7 @@ function renderHeroes() {
     loreName.textContent = 'Select a hero';
     loreText.textContent = 'Click any hero card to view their lore.';
     loreMeta.textContent = 'Role and performance stats will appear here.';
+    syncHeroToUrl(null);
   }
 
   if (sorted.length === 0) {
@@ -211,7 +240,7 @@ function renderHeroes() {
       heroCard.classList.add('is-selected');
     }
 
-    const showLore = () => updateLorePanel(hero.name);
+    const showLore = () => updateLorePanel(hero.name, { syncUrl: true, scrollToDetails: true });
 
     heroCard.addEventListener('click', showLore);
     heroCard.addEventListener('keydown', (event) => {
@@ -227,7 +256,7 @@ function renderHeroes() {
   heroGrid.append(fragment);
 }
 
-function updateLorePanel(heroName) {
+function updateLorePanel(heroName, options = {}) {
   selectedHeroName = heroName;
   selectedHero.textContent = heroName;
 
@@ -235,6 +264,14 @@ function updateLorePanel(heroName) {
   loreName.textContent = heroName;
   loreText.textContent = heroLore[heroName] || 'Lore coming soon for this hero.';
   loreMeta.textContent = hero ? getLoreMeta(hero) : 'Role and performance stats will appear here.';
+
+  if (options.syncUrl) {
+    syncHeroToUrl(heroName);
+  }
+
+  if (options.scrollToDetails && heroDetails) {
+    heroDetails.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
 
   renderHeroes();
 }
@@ -248,6 +285,7 @@ function resetDashboardFilters() {
   loreName.textContent = 'Select a hero';
   loreText.textContent = 'Click any hero card to view their lore.';
   loreMeta.textContent = 'Role and performance stats will appear here.';
+  syncHeroToUrl(null);
   renderHeroes();
 }
 
@@ -263,4 +301,25 @@ roleFilter.addEventListener('change', renderHeroes);
 sortOrder.addEventListener('change', renderHeroes);
 resetFilters.addEventListener('click', resetDashboardFilters);
 
-renderHeroes();
+window.addEventListener('popstate', () => {
+  const heroFromUrl = getHeroFromUrl();
+
+  if (heroFromUrl) {
+    updateLorePanel(heroFromUrl.name);
+    return;
+  }
+
+  selectedHeroName = null;
+  selectedHero.textContent = 'None';
+  loreName.textContent = 'Select a hero';
+  loreText.textContent = 'Click any hero card to view their lore.';
+  loreMeta.textContent = 'Role and performance stats will appear here.';
+  renderHeroes();
+});
+
+const heroFromUrl = getHeroFromUrl();
+if (heroFromUrl) {
+  updateLorePanel(heroFromUrl.name);
+} else {
+  renderHeroes();
+}
